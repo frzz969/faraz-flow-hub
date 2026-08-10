@@ -180,7 +180,7 @@ function Dashboard() {
               timestamp: a.time,
               location: a.module,
               operator: a.record,
-              description: a.before !== "—" ? `${a.before} → ${a.after}` : undefined,
+              description: a.before !== "—" ? `${a.before} → ${a.after}` : "",
               state: "done" as const,
             }))}
           />
