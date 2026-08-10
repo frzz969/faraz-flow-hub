@@ -714,20 +714,23 @@ function rng(seed: number) {
   };
 }
 
+/** Safe cyclic index accessor (project runs with noUncheckedIndexedAccess). */
+const at = <T,>(arr: readonly T[], i: number): T => arr[((i % arr.length) + arr.length) % arr.length] as T;
+
 function buildShipments(): Shipment[] {
   const rand = rng(4711);
   const list: Shipment[] = [];
   for (let i = 0; i < 84; i++) {
-    const status = shipmentStatuses[Math.floor(rand() * shipmentStatuses.length)];
-    const origin = cities[Math.floor(rand() * cities.length)];
-    let destination = cities[Math.floor(rand() * cities.length)];
-    if (destination === origin) destination = cities[(cities.indexOf(origin) + 3) % cities.length];
-    const customer = customers[Math.floor(rand() * customers.length)];
-    const service = serviceTypes[Math.floor(rand() * serviceTypes.length)];
-    const warehouse = warehouses[Math.floor(rand() * warehouses.length)];
-    const route = routes[Math.floor(rand() * routes.length)];
-    const vehicle = vehicles[Math.floor(rand() * vehicles.length)];
-    const driver = drivers[Math.floor(rand() * drivers.length)];
+    const status = at(shipmentStatuses, Math.floor(rand() * shipmentStatuses.length));
+    const origin = at(cities, Math.floor(rand() * cities.length));
+    let destination = at(cities, Math.floor(rand() * cities.length));
+    if (destination === origin) destination = at(cities, cities.indexOf(origin) + 3);
+    const customer = at(customers, Math.floor(rand() * customers.length));
+    const service = at(serviceTypes, Math.floor(rand() * serviceTypes.length));
+    const warehouse = at(warehouses, Math.floor(rand() * warehouses.length));
+    const route = at(routes, Math.floor(rand() * routes.length));
+    const vehicle = at(vehicles, Math.floor(rand() * vehicles.length));
+    const driver = at(drivers, Math.floor(rand() * drivers.length));
     const weight = Math.round((1 + rand() * 240) * 10) / 10;
     const day = 8 + Math.floor(rand() * 6);
     const hour = 7 + Math.floor(rand() * 12);
@@ -736,15 +739,15 @@ function buildShipments(): Shipment[] {
     const upto = idx <= 8 ? idx : 6;
     const events: TrackingEvent[] = flow.slice(0, upto + 1).map((s, n) => ({
       status: s,
-      label: eventLabels[s],
-      location: n < 2 ? origin : n < 5 ? `${origin} Hub` : n < 7 ? hubs[Math.floor(rand() * hubs.length)] : destination,
+      label: eventLabels[s] ?? s,
+      location: n < 2 ? origin : n < 5 ? `${origin} Hub` : n < 7 ? at(hubs, Math.floor(rand() * hubs.length)) : destination,
       timestamp: `0${Math.min(9, 8 + Math.floor(n / 4))} Aug 2026 · ${String(6 + n * 2).padStart(2, "0")}:${String(10 + n * 7).slice(0, 2)}`,
       operator: n === 0 ? "Customer Service" : n < 5 ? "Warehouse Operations" : n < 8 ? "Line Haul" : "Last Mile",
     }));
     if (idx > 8) {
       events.push({
         status,
-        label: eventLabels[status],
+        label: eventLabels[status] ?? status,
         location: warehouse.city,
         timestamp: `10 Aug 2026 · 1${Math.floor(rand() * 9)}:${String(10 + Math.floor(rand() * 45)).slice(0, 2)}`,
         operator: "Exception Desk",
@@ -759,8 +762,8 @@ function buildShipments(): Shipment[] {
       serviceId: service.id,
       weight,
       pieces: 1 + Math.floor(rand() * 8),
-      contents: contents[Math.floor(rand() * contents.length)],
-      currentLocation: `${hubs[Math.floor(rand() * hubs.length)]}`,
+      contents: at(contents, Math.floor(rand() * contents.length)),
+      currentLocation: at(hubs, Math.floor(rand() * hubs.length)),
       warehouseId: warehouse.id,
       status,
       eta: `${day} Aug 2026`,
@@ -774,7 +777,7 @@ function buildShipments(): Shipment[] {
   }
   // Anchor record from the specification.
   list[3] = {
-    ...list[3],
+    ...at(list, 3),
     tracking: "NX-928173",
     customerId: "cus-1",
     origin: "Jakarta",
@@ -815,8 +818,8 @@ export const orders: Order[] = shipments.slice(0, 34).map((s, i) => ({
   destination: s.destination,
   serviceId: s.serviceId,
   amount: s.charge * (1 + (i % 4)),
-  status: ["created", "confirmed", "processing", "ready", "dispatched", "completed", "cancelled"][i % 7],
-  payment: (["paid", "unpaid", "partially_paid"] as const)[i % 3],
+  status: at(["created", "confirmed", "processing", "ready", "dispatched", "completed", "cancelled"], i),
+  payment: at(["paid", "unpaid", "partially_paid"] as const, i),
   date: `0${(i % 9) + 1} Aug 2026`,
   shipment: s.tracking,
 }));
@@ -826,19 +829,19 @@ export const deliveries: Delivery[] = shipments.slice(10, 42).map((s, i) => ({
   code: `DO-2026-${String(4410 + i)}`,
   shipment: s.tracking,
   customerId: s.customerId,
-  address: `Jl. ${["Merdeka", "Diponegoro", "Sudirman", "Ahmad Yani", "Gajah Mada"][i % 5]} No. ${12 + i}, ${s.destination}`,
+  address: `Jl. ${at(["Merdeka", "Diponegoro", "Sudirman", "Ahmad Yani", "Gajah Mada"], i)} No. ${12 + i}, ${s.destination}`,
   driverId: s.driverId,
   vehicleId: s.vehicleId,
   routeId: s.routeId,
   packages: s.pieces,
   attempts: 1 + (i % 3),
-  status: ["assigned", "out_for_delivery", "delivered", "failed", "returned"][i % 5],
+  status: at(["assigned", "out_for_delivery", "delivered", "failed", "returned"], i),
   window: `${9 + (i % 8)}:00 – ${11 + (i % 8)}:00`,
   pod: i % 5 === 2 ? "Signature captured" : "—",
 }));
 
 export const exceptions: ExceptionRec[] = [
-  { id: "exc-1", code: "EXC-1041", shipment: "NX-928175", category: "Delayed", severity: "high", status: "open", owner: "Dispatch · Semarang", expected: "10 Aug 2026 14:00", current: "10 Aug 2026 18:32", reason: "Vehicle breakdown", action: "Transfer to replacement vehicle", vehicle: "TRK-0294", notes: "Replacement TRK-0303 staged at Semarang Hub, ETA recovery 3h.", },
+  { id: "exc-1", code: "EXC-1041", shipment: "NX-928175", category: "Delayed", severity: "high", status: "open", owner: "Dispatch · Semarang", expected: "10 Aug 2026 14:00", current: "10 Aug 2026 18:32", reason: "Vehicle breakdown", action: "Transfer to replacement vehicle", vehicle: "TRK-0294", notes: "Replacement TRK-0303 staged at Semarang Hub, ETA recovery 3h." },
   { id: "exc-2", code: "EXC-1042", shipment: "NX-928182", category: "Failed Delivery", severity: "medium", status: "investigating", owner: "Customer Service", expected: "10 Aug 2026 11:00", current: "10 Aug 2026 12:40", reason: "Recipient unavailable", action: "Reschedule delivery attempt", vehicle: "VAN-0117", notes: "Second attempt scheduled tomorrow morning window." },
   { id: "exc-3", code: "EXC-1043", shipment: "NX-928190", category: "Wrong Address", severity: "medium", status: "open", owner: "Customer Service", expected: "09 Aug 2026 16:00", current: "10 Aug 2026 09:10", reason: "Incomplete address detail", action: "Confirm address with customer contact", vehicle: "VAN-0132", notes: "Awaiting confirmation from PT Nusantara Retail." },
   { id: "exc-4", code: "EXC-1044", shipment: "NX-928201", category: "Damaged", severity: "high", status: "investigating", owner: "Warehouse · Surabaya", expected: "09 Aug 2026 10:00", current: "09 Aug 2026 15:22", reason: "Packaging damage detected at sorting", action: "Repack and file damage report", vehicle: "TRK-0303", notes: "Insurance claim reference INS-4412 opened." },
@@ -865,8 +868,8 @@ export const inbound: InboundRec[] = suppliers.flatMap((s, i) =>
     qty: 40 + ((i * 7 + j * 13) % 220),
     expected: `${8 + ((i + j) % 4)} Aug 2026 · 0${7 + (j % 3)}:00`,
     arrived: (i + j) % 4 === 0 ? "—" : `${8 + ((i + j) % 4)} Aug 2026 · 0${8 + (j % 3)}:20`,
-    inspection: ["Pending", "Passed", "Passed with notes", "Failed"][(i + j) % 4],
-    status: ["expected", "arrived", "scanning", "inspection", "received", "put_away"][(i * 3 + j) % 6],
+    inspection: at(["Pending", "Passed", "Passed with notes", "Failed"], i + j),
+    status: at(["expected", "arrived", "scanning", "inspection", "received", "put_away"], i * 3 + j),
   })),
 );
 
@@ -875,11 +878,11 @@ export const sorting: SortingRec[] = shipments.slice(0, 28).map((s, i) => ({
   code: `SRT-${String(7710 + i)}`,
   shipment: s.tracking,
   warehouseId: s.warehouseId,
-  zone: `Zone ${["A", "B", "C", "D"][i % 4]}-${String(1 + (i % 12)).padStart(2, "0")}`,
+  zone: `Zone ${at(["A", "B", "C", "D"], i)}-${String(1 + (i % 12)).padStart(2, "0")}`,
   destination: s.destination,
-  nextHub: hubs[i % hubs.length],
-  priority: (["high", "medium", "low"] as const)[i % 3],
-  status: ["scanning", "sorting", "dispatched"][i % 3],
+  nextHub: at(hubs, i),
+  priority: at(["high", "medium", "low"] as const, i),
+  status: at(["scanning", "sorting", "dispatched"], i),
 }));
 
 export const outbound: OutboundRec[] = warehouses.flatMap((w, i) =>
@@ -889,11 +892,11 @@ export const outbound: OutboundRec[] = warehouses.flatMap((w, i) =>
     warehouseId: w.id,
     shipments: 40 + ((i * 11 + j * 23) % 180),
     packages: 90 + ((i * 31 + j * 17) % 420),
-    destination: hubs[(i + j + 1) % hubs.length],
-    vehicleId: vehicles[(i + j) % vehicles.length].id,
-    driverId: drivers[(i + j) % drivers.length].id,
-    dispatchTime: `${String(6 + ((i + j) % 12)).padStart(2, "0")}:${["00", "30"][j]}`,
-    status: ["picking", "packing", "loaded", "dispatched"][(i + j) % 4],
+    destination: at(hubs, i + j + 1),
+    vehicleId: at(vehicles, i + j).id,
+    driverId: at(drivers, i + j).id,
+    dispatchTime: `${String(6 + ((i + j) % 12)).padStart(2, "0")}:${at(["00", "30"], j)}`,
+    status: at(["picking", "packing", "loaded", "dispatched"], i + j),
   })),
 );
 
@@ -919,7 +922,7 @@ export const invoices: Invoice[] = customers.flatMap((c, i) =>
       additional,
       tax,
       total: sub + tax,
-      status: (["paid", "partially_paid", "unpaid", "overdue"] as const)[(i + j) % 4],
+      status: at(["paid", "partially_paid", "unpaid", "overdue"] as const, i + j),
     };
   }),
 );
@@ -929,10 +932,10 @@ export const payments: Payment[] = invoices.slice(0, 10).map((inv, i) => ({
   code: `PAY-2026-${String(2210 + i)}`,
   invoice: inv.code,
   customerId: inv.customerId,
-  method: ["Bank Transfer", "Virtual Account", "Corporate Card", "COD Remittance"][i % 4],
+  method: at(["Bank Transfer", "Virtual Account", "Corporate Card", "COD Remittance"], i),
   amount: i % 3 === 1 ? Math.round(inv.total / 2) : inv.total,
   date: `0${(i % 9) + 1} Aug 2026`,
-  status: (["paid", "pending", "failed"] as const)[i % 3],
+  status: at(["paid", "pending", "failed"] as const, i),
 }));
 
 export const cods: CodRec[] = shipments.slice(20, 32).map((s, i) => ({
@@ -943,7 +946,7 @@ export const cods: CodRec[] = shipments.slice(20, 32).map((s, i) => ({
   amount: s.charge * 4,
   collected: i % 3 === 0 ? "—" : `0${(i % 9) + 1} Aug 2026`,
   driverId: s.driverId,
-  status: (["pending", "collected", "remitted"] as const)[i % 3],
+  status: at(["pending", "collected", "remitted"] as const, i),
 }));
 
 export const ROLES = [
