@@ -189,7 +189,7 @@ export function DataProvider({ children }: { children: ReactNode }) {
       setDb((prev) => {
         const list = [{ id, active: true, ...record } as AnyRec, ...(prev[col] as unknown as AnyRec[])];
         const next = { ...prev, [col]: list } as DBState;
-        return audit(next, "Created record", col, label ?? String(record.name ?? record.code ?? id), "—", label ?? String(record.name ?? id));
+        return audit(next, "Created record", col, label ?? String(record['name'] ?? record['code'] ?? id), "—", label ?? String(record['name'] ?? id));
       });
       return id;
     },
@@ -224,8 +224,8 @@ export function DataProvider({ children }: { children: ReactNode }) {
         let nowActive = true;
         const list = (prev[col] as unknown as AnyRec[]).map((r) => {
           if (r.id !== id) return r;
-          nowActive = !(r.active as boolean);
-          return { ...r, active: nowActive, status: nowActive ? r.status : "inactive" };
+          nowActive = !(r['active'] as boolean);
+          return { ...r, active: nowActive, status: nowActive ? r['status'] : "inactive" };
         });
         const next = { ...prev, [col]: list } as DBState;
         return audit(next, nowActive ? "Activated record" : "Deactivated record", col, label ?? id, nowActive ? "Inactive" : "Active", nowActive ? "Active" : "Inactive");

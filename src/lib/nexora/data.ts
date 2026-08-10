@@ -1081,7 +1081,7 @@ export const contracts: ContractRec[] = customers.map((c, i) => ({
   id: `ctr-${i + 1}`,
   code: `CTR-00${91 + i}`,
   customerId: c.id,
-  serviceId: serviceTypes[i % serviceTypes.length].id,
+  serviceId: at(serviceTypes, i).id,
   start: `01 Jan 2026`,
   end: `31 Dec 2026`,
   value: 640_000_000 + i * 180_000_000,
