@@ -85,7 +85,7 @@ function levelFor(role: string, mod: string): { view: string[] } | null {
 
 // ─── Users (dev accounts, scrypt-hashed) ───
 const USERS: { name: string; email: string; phone: string; role: string; department: string; status: "active" | "inactive" }[] = [
-  { name: "Dimas Prakoso", email: "dimas.prakoso@farazzflow.example.com", phone: "0812-1000-2200", role: "Super Admin", department: "IT & Systems", status: "active" },
+  { name: "Faraz", email: "faraz@farazzflow.example.com", phone: "0812-1000-2200", role: "Super Admin", department: "IT & Systems", status: "active" },
   { name: "Andi Prasetyo", email: "andi.prasetyo@farazzflow.example.com", phone: "0812-3300-1122", role: "Operations Manager", department: "Operations", status: "active" },
   { name: "Sri Wahyuni", email: "sri.wahyuni@farazzflow.example.com", phone: "0813-4400-8811", role: "Warehouse Manager", department: "Warehouse · Jakarta", status: "active" },
   { name: "Fajar Nugraha", email: "fajar.nugraha@farazzflow.example.com", phone: "0857-8800-4411", role: "Fleet Manager", department: "Fleet", status: "active" },
@@ -94,6 +94,14 @@ const USERS: { name: string; email: string; phone: string; role: string; departm
   { name: "Nadia Puspita", email: "nadia.puspita@farazzflow.example.com", phone: "0838-6600-9911", role: "Customer Service", department: "Customer Care", status: "active" },
   { name: "Budi Santoso", email: "budi.santoso@farazzflow.example.com", phone: "0812-3344-1100", role: "Driver", department: "Fleet · Semarang", status: "active" },
   { name: "Tono Wibowo", email: "tono.wibowo@farazzflow.example.com", phone: "0821-7700-2255", role: "Warehouse Staff", department: "Warehouse · Surabaya", status: "inactive" },
+  // Test accounts across roles
+  { name: "Test Ops", email: "test.ops@farazzflow.example.com", phone: "0800-0000-0001", role: "Operations Manager", department: "Testing", status: "active" },
+  { name: "Test Warehouse", email: "test.warehouse@farazzflow.example.com", phone: "0800-0000-0002", role: "Warehouse Staff", department: "Testing", status: "active" },
+  { name: "Test Fleet", email: "test.fleet@farazzflow.example.com", phone: "0800-0000-0003", role: "Fleet Manager", department: "Testing", status: "active" },
+  { name: "Test Finance", email: "test.finance@farazzflow.example.com", phone: "0800-0000-0004", role: "Finance", department: "Testing", status: "active" },
+  { name: "Test Dispatcher", email: "test.dispatcher@farazzflow.example.com", phone: "0800-0000-0005", role: "Dispatcher", department: "Testing", status: "active" },
+  { name: "Test CS", email: "test.cs@farazzflow.example.com", phone: "0800-0000-0006", role: "Customer Service", department: "Testing", status: "active" },
+  { name: "Test Driver", email: "test.driver@farazzflow.example.com", phone: "0800-0000-0007", role: "Driver", department: "Testing", status: "active" },
 ];
 
 const DEV_PASSWORD = "Admin123!";

@@ -31,6 +31,9 @@ dist-ssr
 backend/uploads/
 uploads/
 
+# Database backups (mysqldump output)
+backend/backups/
+
 # Editor directories and files
 .vscode/*
 !.vscode/extensions.json

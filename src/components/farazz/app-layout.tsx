@@ -14,6 +14,7 @@ import {
   DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { cn } from "@/lib/utils";
+import { useBackend } from "@/lib/farazz/session";
 import { LANGUAGES, useI18n } from "@/lib/i18n";
 
 type Item = { to: string; labelKey: string; icon: typeof Home };
@@ -224,6 +225,7 @@ function LanguageSwitcher() {
 
 export function AppLayout({ children }: { children: ReactNode }) {
   const { t } = useI18n();
+  const { mode } = useBackend();
   const [collapsed, setCollapsed] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
   const pathname = useRouterState({ select: (s) => s.location.pathname });
@@ -306,6 +308,19 @@ export function AppLayout({ children }: { children: ReactNode }) {
           </div>
 
           <div className="ml-auto flex shrink-0 items-center gap-1.5">
+            <div
+              className="hidden items-center gap-1.5 rounded-full border border-border px-2.5 py-1 text-[10px] font-medium text-muted-foreground sm:flex"
+              title={mode === "live" ? "Connected to the FARAZZ FLOW API" : "Backend offline — showing local seed data"}
+            >
+              <span
+                aria-hidden
+                className={cn(
+                  "h-1.5 w-1.5 rounded-full",
+                  mode === "live" ? "bg-success" : mode === "booting" ? "bg-info" : "bg-warning",
+                )}
+              />
+              {mode === "live" ? "Live API" : mode === "booting" ? "Connecting…" : "Demo"}
+            </div>
             <AskFarazzButton compact />
             <LanguageSwitcher />
             <Button variant="ghost" size="icon" className="relative" aria-label={t("common.notifications")}>

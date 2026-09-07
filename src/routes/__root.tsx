@@ -14,6 +14,7 @@ import appCss from "../styles.css?url";
 import { reportLovableError } from "../lib/lovable-error-reporting";
 import { I18nProvider } from "@/lib/i18n";
 import { DataProvider } from "@/lib/farazz/store";
+import { BackendProvider } from "@/lib/farazz/session";
 import { AppLayout } from "@/components/farazz/app-layout";
 import { Toaster } from "@/components/ui/sonner";
 
@@ -128,15 +129,17 @@ function RootComponent() {
     <QueryClientProvider client={queryClient}>
       <I18nProvider>
         <DataProvider>
-          {isLogin ? (
-            <Outlet />
-          ) : (
-            <AppLayout>
-              {/* Required: nested routes render here. */}
+          <BackendProvider>
+            {isLogin ? (
               <Outlet />
-            </AppLayout>
-          )}
-          <Toaster position="top-right" />
+            ) : (
+              <AppLayout>
+                {/* Required: nested routes render here. */}
+                <Outlet />
+              </AppLayout>
+            )}
+            <Toaster position="top-right" />
+          </BackendProvider>
         </DataProvider>
       </I18nProvider>
     </QueryClientProvider>

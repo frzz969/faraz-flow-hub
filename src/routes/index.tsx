@@ -1,6 +1,7 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { Area, AreaChart, Bar, BarChart, CartesianGrid, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts";
 import { AlertTriangle, ArrowRight, PackageSearch, Truck, Warehouse as WarehouseIcon } from "lucide-react";
+import { useEffect, useState } from "react";
 import { PageHeader } from "@/components/farazz/page-header";
 import { Field, KpiCard, ProgressBar, SectionCard } from "@/components/farazz/primitives";
 import { StatusBadge } from "@/components/farazz/status-badge";
@@ -9,6 +10,8 @@ import { AskFarazzButton } from "@/components/farazz/app-layout";
 import { Button } from "@/components/ui/button";
 import { useData, useLookups, formatNum } from "@/lib/farazz/store";
 import { hubPerformance, shipmentTrend } from "@/lib/farazz/data";
+import { useBackend } from "@/lib/farazz/session";
+import { shipmentsByStatus, usageOverview, type UsageKpis } from "@/lib/farazz/api";
 import { useT } from "@/lib/i18n";
 
 export const Route = createFileRoute("/")({
@@ -28,10 +31,54 @@ function Dashboard() {
   const { db } = useData();
   const look = useLookups();
   const navigate = useNavigate();
+  const { mode } = useBackend();
+
+  const [liveStats, setLiveStats] = useState<{ statuses: Record<string, number>; kpis: UsageKpis | null } | null>(null);
+
+  useEffect(() => {
+    if (mode !== "live") return;
+    let cancelled = false;
+    (async () => {
+      try {
+        const [rows, kpis] = await Promise.all([shipmentsByStatus(), usageOverview()]);
+        if (cancelled) return;
+        const statuses: Record<string, number> = {};
+        for (const r of rows) statuses[r.status] = Number(r.count);
+        setLiveStats({ statuses, kpis });
+      } catch {
+        /* live call failed — keep seed-driven values (zero-break) */
+      }
+    })();
+    return () => {
+      cancelled = true;
+    };
+  }, [mode]);
 
   const inTransit = db.shipments.filter((s) => s.status === "in_transit").length;
   const delivered = db.shipments.filter((s) => s.status === "delivered").length;
   const exceptionsOpen = db.exceptions.filter((e) => e.status !== "resolved").length;
+
+  // Live values override the seed/hardcoded ones when the API is reachable.
+  const live = liveStats;
+  const totalShipments = live ? Object.values(live.statuses).reduce((a, b) => a + b, 0) : null;
+  const kpi = {
+    shipments: live && totalShipments != null ? formatNum(totalShipments) : "12,842",
+    inTransit: live ? formatNum(live.statuses["in_transit"] ?? 0) : "4,291",
+    delivered: live ? formatNum(live.statuses["delivered"] ?? 0) : "7,932",
+    processing:
+      live && totalShipments != null
+        ? formatNum(Math.max(totalShipments - (live.statuses["delivered"] ?? 0) - (live.statuses["cancelled"] ?? 0), 0))
+        : "1,284",
+    exceptions: live && live.kpis ? formatNum(live.kpis.open_exceptions) : String(37),
+  };
+  const snap = {
+    warehouses: live && live.kpis ? live.kpis.warehouses : db.warehouses.filter((w) => w.active).length,
+    customers: live && live.kpis ? live.kpis.customers : db.customers.filter((c) => c.active).length,
+    suppliers: live && live.kpis ? live.kpis.suppliers : db.suppliers.filter((s) => s.active).length,
+    vehicles: live && live.kpis ? live.kpis.vehicles : db.vehicles.filter((v) => v.active).length,
+    serviceTypes: db.serviceTypes.filter((s) => s.active).length,
+    shipmentsActive: live && live.kpis ? live.kpis.active_shipments : `${inTransit} / ${delivered}`,
+  };
 
   const exceptionByCategory = db.exceptions.reduce<Record<string, number>>((acc, e) => {
     acc[e.category] = (acc[e.category] ?? 0) + 1;
@@ -56,11 +103,11 @@ function Dashboard() {
       />
 
       <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-5">
-        <KpiCard label={t("dash.kpi.shipments")} value="12,842" delta="+8.4%" hint="vs last week" tone="success" icon={<PackageSearch className="h-4 w-4" />} />
-        <KpiCard label={t("dash.kpi.inTransit")} value="4,291" hint={t("common.today")} tone="info" icon={<Truck className="h-4 w-4" />} />
-        <KpiCard label={t("dash.kpi.delivered")} value="7,932" delta="96.2%" hint="on-time" tone="success" />
-        <KpiCard label={t("dash.kpi.processing")} value="1,284" hint="Active" tone="info" icon={<WarehouseIcon className="h-4 w-4" />} />
-        <KpiCard label={t("dash.kpi.exceptions")} value={String(37)} delta={t("common.needAttention")} tone="critical" icon={<AlertTriangle className="h-4 w-4" />} />
+        <KpiCard label={t("dash.kpi.shipments")} value={kpi.shipments} delta="+8.4%" hint="vs last week" tone="success" icon={<PackageSearch className="h-4 w-4" />} />
+        <KpiCard label={t("dash.kpi.inTransit")} value={kpi.inTransit} hint={t("common.today")} tone="info" icon={<Truck className="h-4 w-4" />} />
+        <KpiCard label={t("dash.kpi.delivered")} value={kpi.delivered} delta="96.2%" hint="on-time" tone="success" />
+        <KpiCard label={t("dash.kpi.processing")} value={kpi.processing} hint="Active" tone="info" icon={<WarehouseIcon className="h-4 w-4" />} />
+        <KpiCard label={t("dash.kpi.exceptions")} value={kpi.exceptions} delta={t("common.needAttention")} tone="critical" icon={<AlertTriangle className="h-4 w-4" />} />
       </div>
 
       <div className="grid gap-4 xl:grid-cols-3">
@@ -189,12 +236,12 @@ function Dashboard() {
 
       <SectionCard title="Operational snapshot" subtitle="Live master data driving every module">
         <dl className="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-6">
-          <Field label={t("nav.warehouses")} value={formatNum(db.warehouses.filter((w) => w.active).length)} mono />
-          <Field label={t("nav.customers")} value={formatNum(db.customers.filter((c) => c.active).length)} mono />
-          <Field label={t("nav.suppliers")} value={formatNum(db.suppliers.filter((s) => s.active).length)} mono />
-          <Field label={t("nav.vehicles")} value={formatNum(db.vehicles.filter((v) => v.active).length)} mono />
-          <Field label={t("nav.serviceTypes")} value={formatNum(db.serviceTypes.filter((s) => s.active).length)} mono />
-          <Field label={t("nav.shipments")} value={`${formatNum(inTransit)} / ${formatNum(delivered)}`} mono />
+          <Field label={t("nav.warehouses")} value={formatNum(snap.warehouses)} mono />
+          <Field label={t("nav.customers")} value={formatNum(snap.customers)} mono />
+          <Field label={t("nav.suppliers")} value={formatNum(snap.suppliers)} mono />
+          <Field label={t("nav.vehicles")} value={formatNum(snap.vehicles)} mono />
+          <Field label={t("nav.serviceTypes")} value={formatNum(snap.serviceTypes)} mono />
+          <Field label={t("nav.shipments")} value={typeof snap.shipmentsActive === "number" ? formatNum(snap.shipmentsActive) : snap.shipmentsActive} mono />
         </dl>
       </SectionCard>
     </div>

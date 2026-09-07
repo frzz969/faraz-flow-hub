@@ -14,8 +14,9 @@
     "migrate": "tsx scripts/migrate.ts",
     "migrate:down": "tsx scripts/migrate.ts --down",
     "seed": "tsx scripts/seed.ts",
-    "test": "vitest run",
-    "test:watch": "vitest"
+    "backup": "tsx scripts/backup.ts",
+    "test": "tsx --test tests/**/*.test.ts",
+    "test:watch": "tsx --test --watch tests/**/*.test.ts"
   },
   "dependencies": {
     "cookie-parser": "^1.4.7",

@@ -1539,3 +1539,99 @@ cd <repository-name>
 npm i
 npm run dev
 ```
+
+---
+
+## FARAZZ FLOW API (backend)
+
+A production-grade Express API lives in `backend/` and backs the frontend when
+reachable (the UI auto-detects it and falls back to local seed data otherwise).
+
+### Stack
+
+- **Node.js + Express + TypeScript** (`tsx` for dev)
+- **MySQL 8** (`mysql2`), schema migration runner in `database/migrations/`
+- **RBAC** — roles + permission matrix, enforced per route
+- **Auth** — scrypt password hashing, SHA-256 session digests, HttpOnly + SameSite=Lax cookies
+- **CSRF** — double-submit, HMAC-signed `x-csrf-token` header required on all state-changing calls
+- **Rate limiting**, account lockout, helmet + CORS, audit logs + security events
+
+### Getting started
+
+```sh
+cd backend
+npm i
+npm run migrate       # runs pending migrations in database/migrations/
+npm run seed          # seeds roles, demo users, and lookups
+npm run dev           # tsx watch on http://localhost:4100
+```
+
+Copy `backend/.env.example` to `backend/.env` (or keep the root `.env`) and set:
+
+```ini
+DB_HOST=127.0.0.1
+DB_PORT=3306
+DB_NAME=farazz_flow
+DB_USER=root
+DB_PASSWORD=
+PORT=4100
+ENV=development
+```
+
+### Demo accounts (all passwords `Admin123!`)
+
+| Role              | Email                                   |
+| ----------------- | --------------------------------------- |
+| Super Admin       | faraz@farazzflow.example.com            |
+| Operations        | test.ops@farazzflow.example.com         |
+| Warehouse         | test.warehouse@farazzflow.example.com   |
+| Fleet             | test.fleet@farazzflow.example.com       |
+| Finance           | test.finance@farazzflow.example.com     |
+| Dispatcher        | test.dispatcher@farazzflow.example.com  |
+| Customer Service  | test.cs@farazzflow.example.com          |
+| Driver            | test.driver@farazzflow.example.com      |
+
+### API surface
+
+Mounted under `/api/v1`:
+
+- `auth` — login, logout, me, change-password, revoke-sessions
+- `health`, `health/db`
+- Operations: `customers`, `suppliers`, `shipments` (incl. `status`, `status-history`),
+  `orders`, `deliveries`, `exceptions` (incl. `resolve`), `returns`, `service-types`,
+  `pricing`, `contracts`
+- Warehouse: `warehouses`, `warehouse-zones`, `inventory`, `inbound`, `outbound`, `sorting`
+- Fleet: `vehicles`, `drivers`, `routes`, `dispatches`, `maintenance`
+- Finance: `billing` (incl. `bill-items`), `payments`, `cod`
+- Workspace: `approvals` (incl. `decide`), `tasks`, `documents`, `notifications`, `realtime` (SSE)
+- Admin: `admin/users`, `admin/roles`, `admin/audit`, `admin/security-events`
+- Extras: `files` (base64 upload + download + versions), `import-export` (CSV import),
+  `reports` (8 aggregations), `monitoring` (overview/database/activity/health)
+
+Response envelope (same everywhere):
+
+```json
+{ "success": true, "data": { "rows": [], "total": 0 } }
+```
+
+Errors: `{ "success": false, "error": { "code": "...", "message": "...", "details": {} } }`
+
+### Verification
+
+```sh
+cd backend
+npm test          # unit tests (node:test — 10/10)
+npm run backup    # mysqldump → gzip into backend/backups/ (default keep 15)
+```
+
+The full HTTP smoke suite (`84` checks: every router CRUD, shipment/order/delivery/
+dispatch/finance lifecycles, RBAC denials) lives at `backend/scripts/smoke.ps1`
+(Windows) or can be replayed from the repo root.
+
+### Frontend integration
+
+`src/lib/farazz/api.ts` is the typed client (session + CSRF handling, CRUD,
+workflow helpers). `src/lib/farazz/session.tsx` probes `/health` and exposes a
+**Live API / Demo mode** indicator in the shell; log in with a real backend
+account to use live data, or keep using the built-in demo directory.
+Configure the API base with `VITE_API_URL` (default `http://localhost:4100/api/v1`).

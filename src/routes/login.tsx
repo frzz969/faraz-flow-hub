@@ -7,6 +7,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Checkbox } from "@/components/ui/checkbox";
 import { useData } from "@/lib/farazz/store";
+import { useBackend } from "@/lib/farazz/session";
 import { useI18n, LANGUAGES } from "@/lib/i18n";
 
 export const Route = createFileRoute("/login")({
@@ -22,6 +23,7 @@ export const Route = createFileRoute("/login")({
 function LoginPage() {
   const navigate = useNavigate();
   const { db } = useData();
+  const { mode, loginLive } = useBackend();
   const { setLang } = useI18n();
 
   const [email, setEmail] = useState("");
@@ -29,26 +31,49 @@ function LoginPage() {
   const [showPassword, setShowPassword] = useState(false);
   const [remember, setRemember] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [busy, setBusy] = useState(false);
 
   const quickUsers = [
     { label: "Super Admin", email: "dimas.prakoso@farazzflow.example.com" },
     { label: "Operations", email: "andi.prasetyo@farazzflow.example.com" },
   ];
 
-  const submit = (e: FormEvent, userEmail?: string) => {
-    e.preventDefault();
-    const targetEmail = (userEmail ?? email).trim().toLowerCase();
+  const demoSignIn = (targetEmail: string): boolean => {
     const user = db.users.find((u) => u.email.toLowerCase() === targetEmail);
-
     if (!user || password.length === 0) {
       setError("Invalid email or password. Use a demo account below or any password.");
-      return;
+      return false;
     }
     setError(null);
     if (remember && targetEmail) localStorage.setItem("farazz.session.email", targetEmail);
-
     toast.success(`Welcome back, ${user.name}!`);
     navigate({ to: "/" });
+    return true;
+  };
+
+  const submit = async (e: FormEvent, userEmail?: string) => {
+    e.preventDefault();
+    const targetEmail = (userEmail ?? email).trim().toLowerCase();
+    setBusy(true);
+    // 1) Real credential check when the live API is reachable.
+    if (mode !== "demo") {
+      try {
+        const liveUser = await loginLive(targetEmail, password, remember);
+        if (liveUser) {
+          if (remember && targetEmail) localStorage.setItem("farazz.session.email", targetEmail);
+          toast.success(`Welcome back, ${liveUser.name}!`);
+          navigate({ to: "/" });
+          return;
+        }
+      } catch (err) {
+        setBusy(false);
+        setError(err instanceof Error ? err.message : "Sign in failed. Please try again.");
+        return;
+      }
+    }
+    // 2) Demo directory fallback (backend offline).
+    setBusy(false);
+    demoSignIn(targetEmail);
   };
 
   const quickSignIn = (demoEmail: string) => {
@@ -86,6 +111,22 @@ function LoginPage() {
         <div className="w-full max-w-md rounded-xl border border-border bg-card p-6 shadow-sm sm:p-8">
           <h1 className="text-xl font-semibold tracking-tight text-foreground">Sign in to your workspace</h1>
           <p className="mt-1 text-sm text-muted-foreground">Enterprise logistics operations for shipments, warehousing, fleet and finance.</p>
+          <div
+            className="mt-3 inline-flex items-center gap-1.5 rounded-full border border-border px-2.5 py-1 text-[11px] font-medium text-muted-foreground"
+            title={mode === "demo" ? "Backend offline — using local seed data" : "Connected to the FARAZZ FLOW API"}
+          >
+            <span
+              aria-hidden
+              className={
+                mode === "live"
+                  ? "h-1.5 w-1.5 rounded-full bg-success"
+                  : mode === "booting"
+                    ? "h-1.5 w-1.5 rounded-full bg-info"
+                    : "h-1.5 w-1.5 rounded-full bg-warning"
+              }
+            />
+            {mode === "live" ? "Live API connected" : mode === "booting" ? "Connecting…" : "Demo mode (offline seed data)"}
+          </div>
 
           <form onSubmit={submit} className="mt-6 space-y-4">
             <div className="space-y-1.5">
@@ -140,8 +181,8 @@ function LoginPage() {
 
             {error ? <p className="rounded-md border border-destructive/30 bg-destructive/5 px-3 py-2 text-xs text-destructive">{error}</p> : null}
 
-            <Button type="submit" disabled={!email.trim() || !password} className="w-full gap-1.5">
-              <LogIn className="h-4 w-4" aria-hidden /> Sign in
+            <Button type="submit" disabled={!email.trim() || !password || busy} className="w-full gap-1.5">
+              <LogIn className="h-4 w-4" aria-hidden /> {busy ? "Signing in…" : "Sign in"}
             </Button>
           </form>
 

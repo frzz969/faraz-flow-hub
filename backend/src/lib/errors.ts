@@ -69,7 +69,15 @@ export function errorMiddleware(err: unknown, _req: Request, res: Response, _nex
     return;
   }
   logger.error("Unhandled error", { message: err instanceof Error ? err.message : String(err) });
-  res.status(500).json({ success: false, error: { code: "INTERNAL_ERROR", message: "Internal server error" } });
+  const isDev = process.env.NODE_ENV !== "production";
+  res.status(500).json({
+    success: false,
+    error: {
+      code: "INTERNAL_ERROR",
+      message: "Internal server error",
+      ...(isDev ? { details: { message: err instanceof Error ? err.message : String(err) } } : {}),
+    },
+  });
 }
 
 /** 404 for unknown API routes. */
