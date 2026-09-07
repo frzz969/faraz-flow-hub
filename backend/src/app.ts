@@ -7,6 +7,7 @@ import { logger } from "./lib/logger.js";
 import { errorMiddleware, notFoundHandler } from "./lib/errors.js";
 import { healthRouter } from "./routes/v1/health.js";
 import { authPublicRouter, authRouter } from "./routes/v1/auth.js";
+import { adminRouter } from "./routes/v1/admin.js";
 import { csrfProtect } from "./middleware/csrf.js";
 
 export function createApp() {
@@ -51,6 +52,7 @@ export function createApp() {
   // CSRF guard for all remaining state-changing requests (double-submit).
   app.use("/api/v1", csrfProtect);
   app.use("/api/v1/auth", authRouter);
+  app.use("/api/v1/admin", adminRouter);
   // Future: shipmentsRouter, ordersRouter, etc. mounted here.
 
   app.get("/", (_req, res) => {
