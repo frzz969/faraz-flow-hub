@@ -22,9 +22,6 @@ export const API_BASE = (viteEnv?.["VITE_API_URL"] ?? "http://localhost:4100/api
   ""
 );
 
-/** True when `import.meta.env` is available (Vite). False in plain SSR/node. */
-export const isViteEnv = typeof import.meta.env !== "undefined";
-
 export class ApiError extends Error {
   readonly status: number;
   readonly code: string;
@@ -282,8 +279,7 @@ export async function get<T extends Model>(res: ResourceKey, id: number | string
 
 export async function create<T extends Model>(
   res: ResourceKey,
-  body: Record<string, unknown>,
-  isItemCollection = false
+  body: Record<string, unknown>
 ): Promise<T> {
   const env = await request<{ id: number } & Partial<T>>("POST", resources[res], body);
   return { ...(body as T), id: env.data.id };
@@ -446,8 +442,4 @@ export async function pingBackend(timeoutMs = 2500): Promise<HealthData | null> 
   } finally {
     clearTimeout(timer);
   }
-}
-
-export async function resetHealthCache(): Promise<void> {
-  healthCache = null;
 }

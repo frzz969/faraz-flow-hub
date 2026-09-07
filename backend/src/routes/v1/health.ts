@@ -1,7 +1,12 @@
 import { Router } from "express";
 import { asyncHandler, success } from "../../lib/errors.js";
+import { createRequire } from "node:module";
 import { pingDb } from "../../lib/db.js";
-import { packageInfo } from "../../lib/version.js";
+
+/** Expose backend package metadata without importing package.json deeply. */
+const require = createRequire(import.meta.url);
+const pkg = require("../../../package.json") as { name: string; version: string };
+export const packageInfo = { name: pkg.name, version: pkg.version };
 
 export const healthRouter = Router();
 
