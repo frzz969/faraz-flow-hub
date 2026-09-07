@@ -33,10 +33,18 @@ function LoginPage() {
   const [error, setError] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
 
-  const quickUsers = [
+  // Real backend accounts shown when the API is live (seeded demo password).
+  const liveAccounts = [
+    { label: "Super Admin", email: "faraz@farazzflow.example.com" },
+    { label: "Operations", email: "test.ops@farazzflow.example.com" },
+  ];
+  // Offline prototype directory — one-click, password-free demo sign-in.
+  const demoAccounts = [
     { label: "Super Admin", email: "dimas.prakoso@farazzflow.example.com" },
     { label: "Operations", email: "andi.prasetyo@farazzflow.example.com" },
   ];
+  const isLive = mode !== "demo";
+  const quickUsers = isLive ? liveAccounts : demoAccounts;
 
   const demoSignIn = (targetEmail: string): boolean => {
     const user = db.users.find((u) => u.email.toLowerCase() === targetEmail);
@@ -76,9 +84,30 @@ function LoginPage() {
     demoSignIn(targetEmail);
   };
 
-  const quickSignIn = (demoEmail: string) => {
-    if (remember) localStorage.setItem("farazz.session.email", demoEmail.toLowerCase());
-    toast.success(`Signed in as ${demoEmail}`);
+  const quickSignIn = async (accountEmail: string) => {
+    if (isLive) {
+      // Real credential check against the API (seeded demo password).
+      setBusy(true);
+      try {
+        const u = await loginLive(accountEmail, "Admin123!", remember);
+        if (u) {
+          if (remember) localStorage.setItem("farazz.session.email", accountEmail.toLowerCase());
+          toast.success(`Welcome back, ${u.name}!`);
+          navigate({ to: "/" });
+          return;
+        }
+      } catch (err) {
+        setBusy(false);
+        setError(err instanceof Error ? err.message : "Sign in failed. Please try again.");
+        return;
+      }
+      setBusy(false);
+      demoSignIn(accountEmail);
+      return;
+    }
+    // Demo mode: instant sign-in from the seed directory.
+    if (remember) localStorage.setItem("farazz.session.email", accountEmail.toLowerCase());
+    toast.success(`Signed in as ${accountEmail}`);
     navigate({ to: "/" });
   };
 
@@ -188,14 +217,14 @@ function LoginPage() {
 
           <div className="mt-5">
             <div className="relative flex items-center gap-2 text-[11px] uppercase tracking-wide text-muted-foreground">
-              <span className="h-px flex-1 bg-border" /> Demo accounts <span className="h-px flex-1 bg-border" />
+              <span className="h-px flex-1 bg-border" /> {isLive ? "Quick access" : "Demo accounts"} <span className="h-px flex-1 bg-border" />
             </div>
             <div className="mt-3 grid gap-2">
               {quickUsers.map((q) => (
                 <button
                   key={q.email}
                   type="button"
-                  onClick={() => quickSignIn(q.email)}
+                  onClick={() => void quickSignIn(q.email)}
                   className="flex items-center justify-between rounded-md border border-border px-3.5 py-2.5 text-left transition-colors hover:bg-accent"
                 >
                   <span className="text-sm font-medium text-foreground">{q.label}</span>
@@ -204,7 +233,9 @@ function LoginPage() {
               ))}
             </div>
             <p className="mt-3 text-xs text-muted-foreground">
-              This is a demo workspace. Quick-access accounts are derived from the users directory.
+              {isLive
+                ? "One-click sign-in with the seeded demo password (Admin123!)."
+                : "This is a demo workspace. Quick-access accounts are derived from the users directory."}
             </p>
           </div>
         </div>
