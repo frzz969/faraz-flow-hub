@@ -1,0 +1,9 @@
+# Backend
+backend/node_modules/
+backend/dist/
+backend/uploads/
+backend/.env
+backend/*.log
+
+# Tests / coverage
+backend/coverage/
