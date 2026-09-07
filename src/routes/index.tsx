@@ -1,22 +1,22 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { Area, AreaChart, Bar, BarChart, CartesianGrid, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts";
 import { AlertTriangle, ArrowRight, PackageSearch, Truck, Warehouse as WarehouseIcon } from "lucide-react";
-import { PageHeader } from "@/components/nexora/page-header";
-import { Field, KpiCard, ProgressBar, SectionCard } from "@/components/nexora/primitives";
-import { StatusBadge } from "@/components/nexora/status-badge";
-import { Timeline } from "@/components/nexora/timeline";
-import { AskNexoraButton } from "@/components/nexora/app-layout";
+import { PageHeader } from "@/components/farazz/page-header";
+import { Field, KpiCard, ProgressBar, SectionCard } from "@/components/farazz/primitives";
+import { StatusBadge } from "@/components/farazz/status-badge";
+import { Timeline } from "@/components/farazz/timeline";
+import { AskFarazzButton } from "@/components/farazz/app-layout";
 import { Button } from "@/components/ui/button";
-import { useData, useLookups, formatNum } from "@/lib/nexora/store";
-import { hubPerformance, shipmentTrend } from "@/lib/nexora/data";
+import { useData, useLookups, formatNum } from "@/lib/farazz/store";
+import { hubPerformance, shipmentTrend } from "@/lib/farazz/data";
 import { useT } from "@/lib/i18n";
 
 export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
-      { title: "Operations Control Center — NEXORA FLOW" },
+      { title: "Operations Control Center — FARAZZ FLOW" },
       { name: "description", content: "Real-time logistics and supply chain operations overview: shipments, warehouse capacity, fleet dispatch and exceptions." },
-      { property: "og:title", content: "Operations Control Center — NEXORA FLOW" },
+      { property: "og:title", content: "Operations Control Center — FARAZZ FLOW" },
       { property: "og:description", content: "Enterprise logistics and supply chain operations platform." },
     ],
   }),
@@ -46,7 +46,7 @@ function Dashboard() {
         crumbs={[{ label: t("nav.overview") }, { label: t("nav.dashboard") }]}
         actions={
           <>
-            <AskNexoraButton />
+            <AskFarazzButton />
             <Button size="sm" onClick={() => navigate({ to: "/shipments" })}>
               {t("nav.shipments")}
               <ArrowRight className="ml-1 h-3.5 w-3.5" aria-hidden />

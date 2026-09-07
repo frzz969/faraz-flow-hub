@@ -1,5 +1,5 @@
 /**
- * NEXORA FLOW — mock master data + operational data.
+ * FARAZZ FLOW — mock master data + operational data.
  * Structured exactly as an API payload would be, so every collection can
  * later be swapped for a real endpoint without touching components.
  */
@@ -1025,15 +1025,15 @@ function defaultMatrix(): PermissionMatrix {
 export const permissionMatrix: PermissionMatrix = defaultMatrix();
 
 export const users: UserRec[] = [
-  { id: "usr-1", name: "Dimas Prakoso", email: "dimas.prakoso@nexoraflow.example.com", phone: "0812-1000-2200", role: "Super Admin", department: "IT & Systems", status: "active", lastActive: "10 Aug 2026 · 10:42", created: "02 Jan 2025", active: true },
-  { id: "usr-2", name: "Andi Prasetyo", email: "andi.prasetyo@nexoraflow.example.com", phone: "0812-3300-1122", role: "Operations Manager", department: "Operations", status: "active", lastActive: "10 Aug 2026 · 10:31", created: "14 Mar 2025", active: true },
-  { id: "usr-3", name: "Sri Wahyuni", email: "sri.wahyuni@nexoraflow.example.com", phone: "0813-4400-8811", role: "Warehouse Manager", department: "Warehouse · Jakarta", status: "active", lastActive: "10 Aug 2026 · 09:58", created: "20 Mar 2025", active: true },
-  { id: "usr-4", name: "Fajar Nugraha", email: "fajar.nugraha@nexoraflow.example.com", phone: "0857-8800-4411", role: "Fleet Manager", department: "Fleet", status: "active", lastActive: "10 Aug 2026 · 08:12", created: "05 Apr 2025", active: true },
-  { id: "usr-5", name: "Lina Marlina", email: "lina.marlina@nexoraflow.example.com", phone: "0811-5500-3322", role: "Finance", department: "Finance", status: "active", lastActive: "09 Aug 2026 · 17:45", created: "11 May 2025", active: true },
-  { id: "usr-6", name: "Rendi Saputra", email: "rendi.saputra@nexoraflow.example.com", phone: "0819-2200-7744", role: "Dispatcher", department: "Operations · Semarang", status: "active", lastActive: "10 Aug 2026 · 10:39", created: "18 Jun 2025", active: true },
-  { id: "usr-7", name: "Nadia Puspita", email: "nadia.puspita@nexoraflow.example.com", phone: "0838-6600-9911", role: "Customer Service", department: "Customer Care", status: "active", lastActive: "10 Aug 2026 · 10:05", created: "01 Jul 2025", active: true },
-  { id: "usr-8", name: "Budi Santoso", email: "budi.santoso@nexoraflow.example.com", phone: "0812-3344-1100", role: "Driver", department: "Fleet · Semarang", status: "active", lastActive: "10 Aug 2026 · 06:24", created: "09 Aug 2025", active: true },
-  { id: "usr-9", name: "Tono Wibowo", email: "tono.wibowo@nexoraflow.example.com", phone: "0821-7700-2255", role: "Warehouse Staff", department: "Warehouse · Surabaya", status: "inactive", lastActive: "22 Jul 2026 · 14:11", created: "12 Sep 2025", active: false },
+  { id: "usr-1", name: "Dimas Prakoso", email: "dimas.prakoso@farazzflow.example.com", phone: "0812-1000-2200", role: "Super Admin", department: "IT & Systems", status: "active", lastActive: "10 Aug 2026 · 10:42", created: "02 Jan 2025", active: true },
+  { id: "usr-2", name: "Andi Prasetyo", email: "andi.prasetyo@farazzflow.example.com", phone: "0812-3300-1122", role: "Operations Manager", department: "Operations", status: "active", lastActive: "10 Aug 2026 · 10:31", created: "14 Mar 2025", active: true },
+  { id: "usr-3", name: "Sri Wahyuni", email: "sri.wahyuni@farazzflow.example.com", phone: "0813-4400-8811", role: "Warehouse Manager", department: "Warehouse · Jakarta", status: "active", lastActive: "10 Aug 2026 · 09:58", created: "20 Mar 2025", active: true },
+  { id: "usr-4", name: "Fajar Nugraha", email: "fajar.nugraha@farazzflow.example.com", phone: "0857-8800-4411", role: "Fleet Manager", department: "Fleet", status: "active", lastActive: "10 Aug 2026 · 08:12", created: "05 Apr 2025", active: true },
+  { id: "usr-5", name: "Lina Marlina", email: "lina.marlina@farazzflow.example.com", phone: "0811-5500-3322", role: "Finance", department: "Finance", status: "active", lastActive: "09 Aug 2026 · 17:45", created: "11 May 2025", active: true },
+  { id: "usr-6", name: "Rendi Saputra", email: "rendi.saputra@farazzflow.example.com", phone: "0819-2200-7744", role: "Dispatcher", department: "Operations · Semarang", status: "active", lastActive: "10 Aug 2026 · 10:39", created: "18 Jun 2025", active: true },
+  { id: "usr-7", name: "Nadia Puspita", email: "nadia.puspita@farazzflow.example.com", phone: "0838-6600-9911", role: "Customer Service", department: "Customer Care", status: "active", lastActive: "10 Aug 2026 · 10:05", created: "01 Jul 2025", active: true },
+  { id: "usr-8", name: "Budi Santoso", email: "budi.santoso@farazzflow.example.com", phone: "0812-3344-1100", role: "Driver", department: "Fleet · Semarang", status: "active", lastActive: "10 Aug 2026 · 06:24", created: "09 Aug 2025", active: true },
+  { id: "usr-9", name: "Tono Wibowo", email: "tono.wibowo@farazzflow.example.com", phone: "0821-7700-2255", role: "Warehouse Staff", department: "Warehouse · Surabaya", status: "inactive", lastActive: "22 Jul 2026 · 14:11", created: "12 Sep 2025", active: false },
 ];
 
 export const approvals: Approval[] = [
@@ -1104,12 +1104,12 @@ export const pricingRules: PricingRule[] = serviceTypes.flatMap((s, i) =>
 );
 
 export const companyProfile: CompanyProfile = {
-  name: "NEXORA FLOW Logistics Indonesia",
-  companyId: "NXF-ID-0001",
-  address: "Menara Nexora, Jl. Jenderal Sudirman Kav. 52-53, Jakarta Selatan 12190",
+  name: "FARAZZ FLOW Logistics Indonesia",
+  companyId: "FZF-ID-0001",
+  address: "Menara Farazz, Jl. Jenderal Sudirman Kav. 52-53, Jakarta Selatan 12190",
   phone: "+62 21 5099 8800",
-  email: "operations@nexoraflow.example.com",
-  website: "www.nexoraflow.example.com",
+  email: "operations@farazzflow.example.com",
+  website: "www.farazzflow.example.com",
   taxId: "09.812.334.5-011.000",
   currency: "IDR",
   timezone: "Asia/Jakarta (GMT+7)",

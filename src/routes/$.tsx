@@ -1,15 +1,15 @@
 import { createFileRoute, useRouterState } from "@tanstack/react-router";
-import { PageHeader } from "@/components/nexora/page-header";
-import { SectionCard } from "@/components/nexora/primitives";
+import { PageHeader } from "@/components/farazz/page-header";
+import { SectionCard } from "@/components/farazz/primitives";
 import { useT } from "@/lib/i18n";
 
 export const Route = createFileRoute("/$")({
   head: () => ({
     meta: [
-      { title: "Module — NEXORA FLOW" },
-      { name: "description", content: "NEXORA FLOW operational module." },
-      { property: "og:title", content: "Module — NEXORA FLOW" },
-      { property: "og:description", content: "NEXORA FLOW operational module." },
+      { title: "Module — FARAZZ FLOW" },
+      { name: "description", content: "FARAZZ FLOW operational module." },
+      { property: "og:title", content: "Module — FARAZZ FLOW" },
+      { property: "og:description", content: "FARAZZ FLOW operational module." },
       { name: "robots", content: "noindex" },
     ],
   }),
@@ -25,8 +25,8 @@ function ModulePlaceholder() {
     <div className="mx-auto max-w-[104rem] space-y-5">
       <PageHeader
         title={label.replace(/\b\w/g, (c) => c.toUpperCase())}
-        description="This module is part of the NEXORA FLOW workspace and is being wired to the shared operational data layer."
-        crumbs={[{ label: "NEXORA FLOW", to: "/" }, { label: label }]}
+        description="This module is part of the FARAZZ FLOW workspace and is being wired to the shared operational data layer."
+        crumbs={[{ label: "FARAZZ FLOW", to: "/" }, { label: label }]}
       />
       <SectionCard title={t("common.noResults")}>
         <p className="text-sm text-muted-foreground">{t("common.noResultsHint")}</p>

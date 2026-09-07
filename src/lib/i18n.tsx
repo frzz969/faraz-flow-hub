@@ -13,7 +13,7 @@ export type Lang = "en" | "id";
 type Dict = Record<string, string>;
 
 const en: Dict = {
-  "brand.name": "NEXORA FLOW",
+  "brand.name": "FARAZZ FLOW",
   "brand.tagline": "Enterprise Logistics & Supply Chain Operations",
 
   "nav.overview": "Overview",
@@ -183,9 +183,9 @@ const en: Dict = {
   "dash.upcomingDispatch": "Upcoming dispatches",
   "dash.criticalAlerts": "Critical alerts",
 
-  "ai.ask": "Ask NEXORA",
+  "ai.ask": "Ask FARAZZ",
   "ai.subtitle": "Operational intelligence assistant",
-  "ai.comingSoon": "The NEXORA intelligence layer is being prepared. Suggested questions:",
+  "ai.comingSoon": "The FARAZZ intelligence layer is being prepared. Suggested questions:",
   "ai.q1": "Why did delivery performance decrease this week?",
   "ai.q2": "Which shipments need attention?",
   "ai.q3": "Which hub is currently overloaded?",
@@ -414,9 +414,9 @@ const id: Dict = {
   "dash.upcomingDispatch": "Pemberangkatan berikutnya",
   "dash.criticalAlerts": "Peringatan kritis",
 
-  "ai.ask": "Tanya NEXORA",
+  "ai.ask": "Tanya FARAZZ",
   "ai.subtitle": "Asisten intelijen operasional",
-  "ai.comingSoon": "Lapisan intelijen NEXORA sedang disiapkan. Pertanyaan yang disarankan:",
+  "ai.comingSoon": "Lapisan intelijen FARAZZ sedang disiapkan. Pertanyaan yang disarankan:",
   "ai.q1": "Mengapa kinerja pengantaran menurun minggu ini?",
   "ai.q2": "Pengiriman mana yang perlu perhatian?",
   "ai.q3": "Hub mana yang sedang kelebihan beban?",
@@ -489,7 +489,7 @@ type I18nValue = {
 };
 
 const I18nContext = createContext<I18nValue | null>(null);
-const STORAGE_KEY = "nexora.lang";
+const STORAGE_KEY = "farazz.lang";
 
 export function I18nProvider({ children }: { children: ReactNode }) {
   const [lang, setLangState] = useState<Lang>("en");

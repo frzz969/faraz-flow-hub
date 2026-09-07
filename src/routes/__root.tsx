@@ -4,6 +4,7 @@ import {
   Link,
   createRootRouteWithContext,
   useRouter,
+  useRouterState,
   HeadContent,
   Scripts,
 } from "@tanstack/react-router";
@@ -12,8 +13,8 @@ import { useEffect, type ReactNode } from "react";
 import appCss from "../styles.css?url";
 import { reportLovableError } from "../lib/lovable-error-reporting";
 import { I18nProvider } from "@/lib/i18n";
-import { DataProvider } from "@/lib/nexora/store";
-import { AppLayout } from "@/components/nexora/app-layout";
+import { DataProvider } from "@/lib/farazz/store";
+import { AppLayout } from "@/components/farazz/app-layout";
 import { Toaster } from "@/components/ui/sonner";
 
 function NotFoundComponent() {
@@ -23,7 +24,7 @@ function NotFoundComponent() {
         <h1 className="text-6xl font-bold text-foreground">404</h1>
         <h2 className="mt-4 text-xl font-semibold text-foreground">Page not found</h2>
         <p className="mt-2 text-sm text-muted-foreground">
-          This module does not exist in NEXORA FLOW or has been moved.
+          This module does not exist in FARAZZ FLOW or has been moved.
         </p>
         <div className="mt-6">
           <Link
@@ -79,10 +80,10 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
     meta: [
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1" },
-      { title: "NEXORA FLOW — Enterprise Logistics Operations" },
-      { name: "description", content: "NEXORA FLOW is an enterprise logistics and supply chain operations platform for shipments, warehousing, fleet and finance." },
-      { name: "author", content: "NEXORA FLOW" },
-      { property: "og:title", content: "NEXORA FLOW — Enterprise Logistics Operations" },
+      { title: "FARAZZ FLOW — Enterprise Logistics Operations" },
+      { name: "description", content: "FARAZZ FLOW is an enterprise logistics and supply chain operations platform for shipments, warehousing, fleet and finance." },
+      { name: "author", content: "FARAZZ FLOW" },
+      { property: "og:title", content: "FARAZZ FLOW — Enterprise Logistics Operations" },
       { property: "og:description", content: "Enterprise logistics and supply chain operations platform." },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
@@ -93,7 +94,7 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       { rel: "preconnect", href: "https://fonts.gstatic.com", crossOrigin: "anonymous" },
       {
         rel: "stylesheet",
-        href: "https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600&family=Sora:wght@500;600;700&display=swap",
+        href: "https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&family=Space+Grotesk:wght@500;600;700&display=swap",
       },
       { rel: "icon", href: "/favicon.ico", type: "image/x-icon" },
     ],
@@ -120,15 +121,21 @@ function RootShell({ children }: { children: ReactNode }) {
 
 function RootComponent() {
   const { queryClient } = Route.useRouteContext();
+  const pathname = useRouterState({ select: (s) => s.location.pathname });
+  const isLogin = pathname.startsWith("/login");
 
   return (
     <QueryClientProvider client={queryClient}>
       <I18nProvider>
         <DataProvider>
-          <AppLayout>
-            {/* Required: nested routes render here. */}
+          {isLogin ? (
             <Outlet />
-          </AppLayout>
+          ) : (
+            <AppLayout>
+              {/* Required: nested routes render here. */}
+              <Outlet />
+            </AppLayout>
+          )}
           <Toaster position="top-right" />
         </DataProvider>
       </I18nProvider>

@@ -110,7 +110,7 @@ function initialState(): DBState {
   };
 }
 
-const STORAGE_KEY = "nexora.db.v1";
+const STORAGE_KEY = "farazz.db.v1";
 
 type AnyRec = { id: string; [k: string]: unknown };
 

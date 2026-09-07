@@ -116,7 +116,7 @@ function BrandMark({ collapsed }: { collapsed?: boolean }) {
       </span>
       {!collapsed && (
         <span className="min-w-0">
-          <span className="block truncate font-display text-sm font-semibold tracking-tight">NEXORA FLOW</span>
+          <span className="block truncate font-display text-sm font-semibold tracking-tight">FARAZZ FLOW</span>
           <span className="block truncate text-[10px] text-muted-foreground">Logistics Operations</span>
         </span>
       )}
@@ -166,7 +166,7 @@ function NavList({ collapsed, onNavigate }: { collapsed: boolean; onNavigate?: (
   );
 }
 
-export function AskNexoraButton({ compact }: { compact?: boolean }) {
+export function AskFarazzButton({ compact }: { compact?: boolean }) {
   const { t } = useI18n();
   return (
     <Dialog>
@@ -286,7 +286,7 @@ export function AppLayout({ children }: { children: ReactNode }) {
               </Button>
             </SheetTrigger>
             <SheetContent side="left" className="w-72 overflow-y-auto bg-sidebar p-0">
-              <SheetTitle className="sr-only">NEXORA FLOW navigation</SheetTitle>
+              <SheetTitle className="sr-only">FARAZZ FLOW navigation</SheetTitle>
               <div className="flex h-14 items-center border-b border-sidebar-border px-3">
                 <BrandMark />
               </div>
@@ -306,7 +306,7 @@ export function AppLayout({ children }: { children: ReactNode }) {
           </div>
 
           <div className="ml-auto flex shrink-0 items-center gap-1.5">
-            <AskNexoraButton compact />
+            <AskFarazzButton compact />
             <LanguageSwitcher />
             <Button variant="ghost" size="icon" className="relative" aria-label={t("common.notifications")}>
               <Bell className="h-4 w-4" aria-hidden />

@@ -1,8 +1,8 @@
-# Nexora Flow Hub
+# Farazz Flow Hub
 
 Create a production-quality enterprise SaaS web application called:
 
-NEXORA FLOW
+FARAZZ FLOW
 Enterprise Logistics & Supply Chain Operations Platform
 
 IMPORTANT:
@@ -17,7 +17,7 @@ DESIGN BENCHMARKS:
 - Take inspiration from the business depth and operational integration found in enterprise ERP/WMS products such as HashMicro.
 - Take inspiration from the end-to-end enterprise workflow, modular architecture, reporting, and extensibility of platforms such as Rootera.
 - DO NOT copy their branding, layouts, wording, visual identity, components, or exact UI.
-- Create a completely original NEXORA FLOW identity.
+- Create a completely original FARAZZ FLOW identity.
 
 CORE DESIGN PRINCIPLE:
 
@@ -30,7 +30,7 @@ The application may contain complex enterprise operations, but the interface mus
 ==================================================
 
 Product name:
-NEXORA FLOW
+FARAZZ FLOW
 
 Tagline:
 Enterprise Logistics & Supply Chain Operations
@@ -108,7 +108,7 @@ Create a professional enterprise application shell.
 
 Sidebar:
 
-NEXORA FLOW
+FARAZZ FLOW
 ----------------
 
 OVERVIEW
@@ -912,7 +912,7 @@ Do NOT integrate Claude yet.
 
 Create only a subtle UI entry point:
 
-"Ask NEXORA"
+"Ask FARAZZ"
 
 Use a small AI button in appropriate locations.
 
@@ -1106,7 +1106,7 @@ Create a dedicated Admin / Management Console for the company.
 
 IMPORTANT:
 
-The company must be able to manage the contents and configuration of NEXORA FLOW through the application itself.
+The company must be able to manage the contents and configuration of FARAZZ FLOW through the application itself.
 
 This means the system must NOT depend on developers to manually edit frontend code whenever the company wants to add, edit, deactivate, or manage operational data.
 
@@ -1427,7 +1427,7 @@ Do not attempt to implement the production backend in this first frontend protot
 42. IMPORTANT UX RULE
 ==================================================
 
-The Admin Console must feel like part of the same NEXORA FLOW product.
+The Admin Console must feel like part of the same FARAZZ FLOW product.
 
 Do NOT make it look like a separate generic admin template.
 
