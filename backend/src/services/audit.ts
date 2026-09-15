@@ -1,5 +1,5 @@
 import type { NextFunction, Request, Response } from "express";
-import { execute, query } from "../lib/db.js";
+import { execute, query } from "../repositories/db.js";
 import { ApiError } from "../lib/errors.js";
 import { logger } from "../lib/logger.js";
 import type { AuthUser } from "../middleware/auth.js";

@@ -1,6 +1,6 @@
 import type { NextFunction, Request, Response } from "express";
 import type { RowDataPacket } from "mysql2/promise";
-import { query, execute } from "../lib/db.js";
+import { query, execute } from "../repositories/db.js";
 import { ApiError, asyncHandler } from "../lib/errors.js";
 import { getSessionUserId, readSessionToken, noStore, type SessionMeta } from "../lib/session.js";
 

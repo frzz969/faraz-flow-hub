@@ -1,6 +1,6 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
-import { parseCsv } from "../src/routes/v1/import-export.js";
+import { parseCsv } from "../src/controllers/import-export.js";
 
 test("parseCsv: parses simple rows", () => {
   const rows = parseCsv("a,b,c\n1,2,3\n");

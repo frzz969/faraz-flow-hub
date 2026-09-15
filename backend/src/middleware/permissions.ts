@@ -1,6 +1,6 @@
 import type { NextFunction, Request, Response } from "express";
 import type { RowDataPacket } from "mysql2/promise";
-import { query } from "../lib/db.js";
+import { query } from "../repositories/db.js";
 import { ApiError } from "../lib/errors.js";
 
 /**

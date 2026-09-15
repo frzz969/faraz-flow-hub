@@ -1,6 +1,6 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
-import { inferAlias } from "../src/lib/crud.js";
+import { inferAlias } from "../src/services/crud.js";
 
 test("inferAlias: bare table (no alias)", () => {
   assert.equal(inferAlias("customers", "FROM customers"), "customers");

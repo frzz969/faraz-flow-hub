@@ -1,8 +1,8 @@
 import type { Request, Response } from "express";
 import type { RowDataPacket } from "mysql2/promise";
 import { createHash, randomBytes } from "node:crypto";
-import { config } from "../config.js";
-import { query, execute } from "./db.js";
+import { config } from "../config/config.js";
+import { query, execute } from "../repositories/db.js";
 import { logger } from "./logger.js";
 
 export const SESSION_COOKIE = "ffz_session";

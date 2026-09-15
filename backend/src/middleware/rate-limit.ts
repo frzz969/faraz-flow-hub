@@ -1,6 +1,6 @@
 import type { NextFunction, Request, Response } from "express";
 import { rateLimit } from "express-rate-limit";
-import { config } from "../config.js";
+import { config } from "../config/config.js";
 
 /**
  * Per-IP rate limiter for authentication endpoints (brute-force guard).

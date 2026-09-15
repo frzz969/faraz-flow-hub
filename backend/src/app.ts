@@ -2,43 +2,43 @@ import express from "express";
 import cors from "cors";
 import helmet from "helmet";
 import cookieParser from "cookie-parser";
-import { config } from "./config.js";
+import { config } from "./config/config.js";
 import { logger } from "./lib/logger.js";
 import { errorMiddleware, notFoundHandler } from "./lib/errors.js";
 import { startHeartbeat } from "./lib/realtime.js";
-import { healthRouter } from "./routes/v1/health.js";
-import { authPublicRouter, authRouter } from "./routes/v1/auth.js";
-import { adminRouter } from "./routes/v1/admin.js";
+import { healthRouter } from "./controllers/health.js";
+import { authPublicRouter, authRouter } from "./controllers/auth.js";
+import { adminRouter } from "./controllers/admin.js";
 import { csrfProtect } from "./middleware/csrf.js";
 
 // P5: Operations core
-import { customersRouter } from "./routes/v1/customers.js";
-import { shipmentsRouter } from "./routes/v1/shipments.js";
-import { ordersRouter } from "./routes/v1/orders.js";
-import { deliveriesRouter } from "./routes/v1/deliveries.js";
-import { exceptionsRouter } from "./routes/v1/exceptions.js";
-import { returnsRouter } from "./routes/v1/returns.js";
-import { suppliersRouter, serviceTypesRouter, pricingRouter, contractsRouter } from "./routes/v1/business.js";
+import { customersRouter } from "./controllers/customers.js";
+import { shipmentsRouter } from "./controllers/shipments.js";
+import { ordersRouter } from "./controllers/orders.js";
+import { deliveriesRouter } from "./controllers/deliveries.js";
+import { exceptionsRouter } from "./controllers/exceptions.js";
+import { returnsRouter } from "./controllers/returns.js";
+import { suppliersRouter, serviceTypesRouter, pricingRouter, contractsRouter } from "./controllers/business.js";
 
 // Warehouse
-import { warehousesRouter, zonesRouter, inventoryRouter, inboundRouter, outboundRouter, sortingRouter } from "./routes/v1/warehouse.js";
+import { warehousesRouter, zonesRouter, inventoryRouter, inboundRouter, outboundRouter, sortingRouter } from "./controllers/warehouse.js";
 
 // Fleet
-import { vehiclesRouter, driversRouter, routesRouter, dispatchesRouter, maintenanceRouter } from "./routes/v1/fleet.js";
+import { vehiclesRouter, driversRouter, routesRouter, dispatchesRouter, maintenanceRouter } from "./controllers/fleet.js";
 
 // Finance
-import { billingRouter, billItemsRouter, paymentsRouter, codRouter } from "./routes/v1/finance.js";
+import { billingRouter, billItemsRouter, paymentsRouter, codRouter } from "./controllers/finance.js";
 
 // P6/P9/P8: Workspace, notifications, realtime
-import { approvalsRouter, tasksRouter, documentsRouter } from "./routes/v1/workspace.js";
-import { notificationsRouter } from "./routes/v1/notifications.js";
-import { realtimeRouter } from "./routes/v1/realtime.js";
+import { approvalsRouter, tasksRouter, documentsRouter } from "./controllers/workspace.js";
+import { notificationsRouter } from "./controllers/notifications.js";
+import { realtimeRouter } from "./controllers/realtime.js";
 
 // P10-P13
-import { filesRouter } from "./routes/v1/files.js";
-import { importExportRouter } from "./routes/v1/import-export.js";
-import { reportsRouter } from "./routes/v1/reports.js";
-import { monitoringRouter } from "./routes/v1/monitoring.js";
+import { filesRouter } from "./controllers/files.js";
+import { importExportRouter } from "./controllers/import-export.js";
+import { reportsRouter } from "./controllers/reports.js";
+import { monitoringRouter } from "./controllers/monitoring.js";
 
 export function createApp() {
   const app = express();
