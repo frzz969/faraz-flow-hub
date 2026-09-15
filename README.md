@@ -47,7 +47,7 @@ A full-stack operations platform for a large logistics, distribution, and supply
 | --- | --- |
 | Frontend | TanStack Start (React), TypeScript, Tailwind CSS v4, shadcn/ui |
 | Backend | Node.js, Express, TypeScript (`tsx` dev runner) |
-| Database | MySQL 8 (`mysql2`), SQL migrations |
+| Database | MySQL 8 (`mysql2`), SQL migrations + `schema.sql` + seeds |
 | Auth / Security | scrypt password hashing, HttpOnly session cookies, CSRF double-submit, rate limiting, RBAC middlewares, audit + security-event logging |
 
 ## Getting Started
@@ -64,7 +64,7 @@ cd backend
 npm i
 npm run migrate   # runs pending migrations in database/migrations/
 npm run seed      # seeds roles, demo users, and lookup data
-npm run dev       # tsx watch → http://localhost:4100
+npm run dev       # tsx watch src/server.ts → http://localhost:4100
 ```
 
 Copy `backend/.env.example` to `backend/.env` (or use the root `.env`) and adjust:
@@ -80,16 +80,17 @@ ENV=development
 ```
 
 > The DB name used by migrations is configurable via `DB_NAME`. Snapshot migrations
-> are idempotent — safe to run repeatedly.
+> are idempotent — safe to run repeatedly. `database/schema.sql` + `database/seeds/`
+> hold the canonical schema and seed data.
 
-### 2. Frontend (Vite dev)
+### 2. Frontend (Vite dev, port `5173`)
 
 ```sh
-npm i
-npm run dev       # starts the TanStack Start app
+npm i               # root package.json serves frontend/
+npm run dev         # vite dev, sources in frontend/src/
 ```
 
-Open the printed URL (default `http://localhost:5173`). Point the UI at a custom
+Open the printed URL. Point the UI at a custom
 API with `VITE_API_URL` (default `http://localhost:4100/api/v1`). When the API is
 reachable the shell shows a **Live API** pill and login uses real backend accounts;
 otherwise it falls back to built-in demo mode.
@@ -111,7 +112,7 @@ All passwords: `Admin123!`
 
 ## API
 
-V1 rest API mounted under `/api/v1`: auth, health, customers, suppliers, shipments
+V1 rest API mounted under `/api/v1` (see `backend/src/app.ts` mount table and `docs/API.md` for the full contract): auth, health, customers, suppliers, shipments
 (+ status transitions & history), orders, deliveries, exceptions, returns,
 service-types, pricing, contracts, warehouses, warehouse-zones, inventory,
 inbound, outbound, sorting, vehicles, drivers, routes, dispatches, maintenance,
@@ -133,18 +134,45 @@ Errors:
 ## Repository Layout
 
 ```
-backend/            Express API, services, middleware, migrations runner, tests, smoke script
-database/migrations 9 snapshot SQL migrations (auth → soft deletes)
-docs/SPEC.md       Original product build brief
-src/               Frontend (routes, components, lib, API client, i18n)
+backend/src/
+  config/         typed env (config.ts)
+  controllers/    20 endpoint modules (ex-routes/v1): auth, admin, health,
+                  customers, shipments, orders, deliveries, exceptions, returns,
+                  business, warehouse, fleet, finance, workspace, notifications,
+                  realtime, files, import-export, reports, monitoring
+  lib/            errors, logger, session, security, realtime
+  middleware/     auth, csrf, permissions, rate-limit
+  services/       crud.ts, workflow.ts (state machines), audit.ts
+  repositories/   db.ts, pool.ts
+  validators/     shared Zod validators
+  modules/        barrel indexes per domain (re-export controllers)
+  database/       barrel re-export
+  scripts/        migrate.ts, seed.ts, backup.ts, smoke.ps1
+  tests/          node:test suites
+database/
+  migrations/     9 snapshot SQL migrations, 001 auth → 009 soft deletes
+  schema.sql      canonical schema
+  seeds/          seed data + README
+frontend/src/     TanStack Start app: routes/ (41 pages), components/
+                  (farazz/* + ui/*), lib/farazz (api, store, data, session,
+                  export), i18n, router.tsx, routeTree.gen.ts
+frontend/public/  favicon, robots
+docs/             API.md (contract), ARCHITECTURE.md (as-built), PRD.md,
+                  STRUCTURE.md (route→API→lib→DB map), SPEC.md (build brief)
 ```
+
+> **Migration note:** `src/*` → `frontend/src/*`, `backend/src/routes/v1/*` →
+> `backend/src/controllers/*`, `lib/crud|workflow.ts` → `services/`,
+> `lib/db|pool.ts` → `repositories/`. Old directories are removed; see
+> `docs/STRUCTURE.md` for the verified map (including known module anomalies).
 
 ## Verification
 
 ```sh
 cd backend
-npm test              # unit tests (node:test)
-npm run backup        # mysqldump → gzip into backend/backups/ (keeps last 15)
+npm run typecheck   # tsc --noEmit
+npm test            # unit tests (node:test)
+npm run backup      # mysqldump → gzip into backend/backups/ (keeps last 15)
 ```
 
 Full HTTP smoke suite (84 checks covering every router CRUD, lifecycle status
