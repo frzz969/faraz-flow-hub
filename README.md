@@ -1,10 +1,25 @@
 # FARAZZ FLOW
 
+![TypeScript](https://img.shields.io/badge/TypeScript-fullstack-blue)
+![React](https://img.shields.io/badge/TanStack_Start-React-61dafb)
+![MySQL 8](https://img.shields.io/badge/MySQL-8-orange)
+![Bilingual](https://img.shields.io/badge/bahasa-EN_%2F_ID-green)
+
 **Enterprise Logistics & Supply Chain Operations Platform**
 
 A full-stack operations platform for a large logistics, distribution, and supply-chain company. It behaves like an internal enterprise SaaS: operations, warehouse, fleet, finance, analytics, and an admin console that manages the system from within the app itself — not a landing page, not a simple tracker UI.
 
-![App](https://raw.githubusercontent.com/frzz969/nexora-flow-hub/main/public/screenshot-placeholder.svg)
+## Daftar isi
+
+- [Highlights](#highlights)
+- [Modules](#modules)
+- [Tech Stack](#tech-stack)
+- [Getting Started](#getting-started)
+- [Demo accounts](#demo-accounts)
+- [API](#api)
+- [Repository Layout](#repository-layout)
+- [Verification](#verification)
+- [License](#license)
 
 ## Highlights
 
@@ -79,7 +94,7 @@ API with `VITE_API_URL` (default `http://localhost:4100/api/v1`). When the API i
 reachable the shell shows a **Live API** pill and login uses real backend accounts;
 otherwise it falls back to built-in demo mode.
 
-### Demo accounts
+## Demo accounts
 
 All passwords: `Admin123!`
 
